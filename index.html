@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Discord Earnings Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<h1>💜 Discord Earnings Tracker</h1>
+
+<div class="dashboard">
+  <div>Total WIST: <span id="totalWist">0</span></div>
+  <div>Total USD: $<span id="totalUsd">0</span></div>
+  <div>PayPal Received: $<span id="totalPaypal">0</span></div>
+  <div>Net Profit: $<span id="totalProfit">0</span></div>
+</div>
+
+<form id="entryForm">
+  <input type="date" id="date" required>
+  <input type="number" id="wist" placeholder="WIST Sold" required>
+  <input type="number" step="0.0001" id="rate" placeholder="Rate (USD)" required>
+  <input type="number" step="0.01" id="paypal" placeholder="PayPal Received" required>
+
+  <select id="status">
+    <option>Paid</option>
+    <option>Pending</option>
+  </select>
+
+  <input type="text" id="notes" placeholder="Notes (optional)">
+  <button type="submit">Add Entry</button>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>Month</th>
+      <th>WIST</th>
+      <th>USD</th>
+      <th>PayPal</th>
+      <th>Fee</th>
+      <th>Profit</th>
+      <th>Status</th>
+      <th>✅</th>
+    </tr>
+  </thead>
+  <tbody id="tableBody"></tbody>
+</table>
+
+<script src="app.js"></script>
+</body>
+</html>

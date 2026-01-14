@@ -1,0 +1,8 @@
+{
+  "name": "Discord Earnings Tracker",
+  "short_name": "Earnings",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f0a1f",
+  "theme_color": "#8f4dff"
+}
