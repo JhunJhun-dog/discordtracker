@@ -12,9 +12,13 @@ const form = document.getElementById("entryForm");
 document.getElementById("date").valueAsDate = new Date();
 
 // ===== HELPERS =====
-function monthName(dateStr) {
+function formatDate(dateStr) {
   const d = new Date(dateStr);
-  return d.toLocaleString("default", { month: "long", year: "numeric" });
+  return d.toLocaleDateString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric"
+  });
 }
 
 // PayPal fee: 4.99% + $0.49
@@ -48,7 +52,7 @@ function render() {
 
     tableBody.innerHTML += `
       <tr>
-        <td>${monthName(e.date)}</td>
+        <td>${formatDate(e.date)}</td>
         <td>${e.wist}</td>
         <td>$${usd}</td>
         <td>₹${inr}</td>
@@ -102,7 +106,7 @@ function exportCSV() {
   }
 
   const headers = [
-    "Month",
+    "Date",
     "Wist",
     "Rate (Wist per $)",
     "USD",
@@ -120,7 +124,7 @@ function exportCSV() {
     const profit = (e.paypal - fee).toFixed(2);
 
     return [
-      monthName(e.date),
+      formatDate(e.date),
       e.wist,
       e.rate,
       usd,
@@ -148,3 +152,4 @@ function exportCSV() {
 
 // ===== INIT =====
 render();
+
