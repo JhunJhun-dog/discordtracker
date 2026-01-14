@@ -47,7 +47,7 @@ function render() {
         <td>$${fee}</td>
         <td>$${profit}</td>
         <td>${e.status}</td>
-        <td><button onclick="del(${i})">❌</button></td>
+        <td><button onclick="del(${i})">✅</button></td>
       </tr>
     `;
   });
@@ -124,3 +124,4 @@ function exportCSV() {
 }
 
 render();
+
