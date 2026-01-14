@@ -25,7 +25,7 @@ function render() {
   let totalProfit = 0;
 
   data.forEach((e, i) => {
-    const usd = +(e.wist * e.rate).toFixed(2);
+    const usd = +(e.wist / e.rate).toFixed(2);
     const fee = paypalFee(e.paypal);
     const profit = +(e.paypal - fee).toFixed(2);
 
@@ -79,3 +79,41 @@ document.getElementById("entryForm").addEventListener("submit", e => {
 });
 
 render();
+
+function exportCSV() {
+  if (!data.length) {
+    alert("No data to export");
+    return;
+  }
+
+  const headers = ["Month","Wist","Rate(Wist/$)","USD","PayPal","Fee","Profit","Status"];
+
+  const rows = data.map(e => {
+    const usd = (e.wist / e.rate).toFixed(2);
+    const fee = paypalFee(e.paypal).toFixed(2);
+    const profit = (e.paypal - fee).toFixed(2);
+
+    return [
+      monthName(e.date),
+      e.wist,
+      usd,
+      e.paypal,
+      fee,
+      profit,
+      e.status || "Paid"
+    ];
+  });
+
+  let csv = headers.join(",") + "\n";
+  rows.forEach(r => csv += r.join(",") + "\n");
+
+  const blob = new Blob([csv], { type: "text/csv" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "discord-earnings.csv";
+  a.click();
+
+  URL.revokeObjectURL(url);
+}
