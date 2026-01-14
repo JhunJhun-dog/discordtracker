@@ -1,6 +1,7 @@
 let data = JSON.parse(localStorage.getItem("wistData")) || [];
 
 const tableBody = document.getElementById("tableBody");
+const form = document.getElementById("entryForm");
 
 document.getElementById("date").valueAsDate = new Date();
 
@@ -12,6 +13,7 @@ function monthName(dateStr) {
   });
 }
 
+// PayPal fee: 4.99% + $0.49
 function paypalFee(amount) {
   return +(amount * 0.0499 + 0.49).toFixed(2);
 }
@@ -25,6 +27,8 @@ function render() {
   let totalProfit = 0;
 
   data.forEach((e, i) => {
+    if (!e.status) e.status = "Paid";
+
     const usd = +(e.wist / e.rate).toFixed(2);
     const fee = paypalFee(e.paypal);
     const profit = +(e.paypal - fee).toFixed(2);
@@ -42,8 +46,8 @@ function render() {
         <td>$${e.paypal}</td>
         <td>$${fee}</td>
         <td>$${profit}</td>
-        <td>${e.status || "Paid"}</td>
-        <td><button onclick="del(${i})">✅</button></td>
+        <td>${e.status}</td>
+        <td><button onclick="del(${i})">❌</button></td>
       </tr>
     `;
   });
@@ -61,32 +65,32 @@ function del(i) {
   render();
 }
 
-document.getElementById("entryForm").addEventListener("submit", e => {
+form.addEventListener("submit", function (e) {
   e.preventDefault();
 
-  data.push({
+  const entry = {
     date: date.value,
-    wist: +wist.value,
-    rate: +rate.value,
-    paypal: +paypal.value,
+    wist: Number(wist.value),
+    rate: Number(rate.value), // WIST per $1
+    paypal: Number(paypal.value),
     status: status.value,
     notes: notes.value
-  });
+  };
 
-  e.target.reset();
+  data.push(entry);
+  form.reset();
   date.valueAsDate = new Date();
   render();
 });
 
-render();
-
+// CSV EXPORT
 function exportCSV() {
   if (!data.length) {
     alert("No data to export");
     return;
   }
 
-  const headers = ["Month","Wist","Rate(Wist/$)","USD","PayPal","Fee","Profit","Status"];
+  const headers = ["Month","Wist","Rate(WIST/$)","USD","PayPal","Fee","Profit","Status"];
 
   const rows = data.map(e => {
     const usd = (e.wist / e.rate).toFixed(2);
@@ -96,11 +100,12 @@ function exportCSV() {
     return [
       monthName(e.date),
       e.wist,
+      e.rate,
       usd,
       e.paypal,
       fee,
       profit,
-      e.status || "Paid"
+      e.status
     ];
   });
 
@@ -117,3 +122,5 @@ function exportCSV() {
 
   URL.revokeObjectURL(url);
 }
+
+render();
