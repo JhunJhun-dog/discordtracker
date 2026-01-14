@@ -42,7 +42,7 @@
         <input type="date" id="date" required />
         <input type="number" id="wist" placeholder="Wist Sold" required />
         <input type="number" id="rate" placeholder="Rate (Wist per $1)" value="30" required />
-        <input type="number" id="paypal" placeholder="PayPal Received ($)" required />
+        <input type="number" id="paypal" placeholder="PayPal Received ($)" step="0.01" min="0" required />
 
         <select id="status">
           <option value="Paid">Paid</option>
@@ -99,3 +99,4 @@ if (savedTheme) {
 
 </body>
 </html>
+
