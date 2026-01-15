@@ -5,6 +5,7 @@
   <title>Discord Earnings Tracker</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="data:,">
 </head>
 
 <body class="dark">
@@ -16,62 +17,46 @@
     <h2>💜 Tracker</h2>
 
     <nav>
-  <a class="active">Dashboard</a>
-  <a onclick="exportCSV()">Export CSV</a>
-  <label class="import-btn">
-    Import CSV
-    <input type="file" accept=".csv" onchange="importCSV(event)" hidden />
-  </label>
-</nav>
+      <a class="active">Dashboard</a>
+      <a onclick="exportCSV()">Export CSV</a>
+
+      <label class="import-btn">
+        Import CSV
+        <input type="file" accept=".csv" hidden onchange="importCSV(event)">
+      </label>
+    </nav>
 
     <button class="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</button>
   </aside>
 
-  <!-- MAIN CONTENT -->
+  <!-- MAIN -->
   <main class="main">
 
-    <!-- SUMMARY CARDS -->
-<section class="cards">
-  <div class="card">Total Wist<br><strong id="totalWist">0</strong></div>
+    <!-- SUMMARY -->
+    <section class="cards">
+      <div class="card">Total Wist<br><strong id="totalWist">0</strong></div>
+      <div class="card">Total USD<br><strong>$<span id="totalUsd">0</span></strong></div>
+      <div class="card">Total INR<br><strong>₹<span id="totalInr">0</span></strong></div>
+      <div class="card">PayPal Received<br><strong>$<span id="totalPaypal">0</span></strong></div>
+      <div class="card">Net Profit<br><strong>$<span id="totalProfit">0</span></strong></div>
+    </section>
 
-  <div class="card">
-    Total USD<br>
-    <strong>$<span id="totalUsd">0</span></strong>
-  </div>
-
-  <div class="card">
-    Total INR<br>
-    <strong>₹<span id="totalInr">0</span></strong>
-  </div>
-
-  <div class="card">
-    PayPal Received<br>
-    <strong>$<span id="totalPaypal">0</span></strong>
-  </div>
-
-  <div class="card">
-    Net Profit<br>
-    <strong>$<span id="totalProfit">0</span></strong>
-  </div>
-</section>
-
-    <!-- ADD ENTRY -->
+    <!-- FORM -->
     <section class="panel">
       <h3>Add Entry</h3>
 
       <form id="entryForm">
-        <input type="date" id="date" required />
-        <input type="number" id="wist" placeholder="Wist Sold" required />
-        <input type="number" id="rate" placeholder="Rate (Wist per $1)" value="30" required />
-        <input type="number" id="paypal" placeholder="PayPal Received ($)" step="0.01" min="0" required />
+        <input type="date" id="date" required>
+        <input type="number" id="wist" placeholder="Wist Sold" required>
+        <input type="number" id="rate" value="30" step="0.01" placeholder="Rate (Wist per $1)" required>
+        <input type="number" id="paypal" step="0.01" min="0" placeholder="PayPal Received ($)" required>
 
         <select id="status">
           <option value="Paid">Paid</option>
           <option value="Pending">Pending</option>
         </select>
 
-        <input type="text" id="notes" placeholder="Notes (optional)" />
-
+        <input type="text" id="notes" placeholder="Notes (optional)">
         <button type="submit">Add Entry</button>
       </form>
     </section>
@@ -91,7 +76,7 @@
             <th>Fee</th>
             <th>Profit</th>
             <th>Status</th>
-            <th>✅</th>
+            <th>❌</th>
           </tr>
         </thead>
         <tbody id="tableBody"></tbody>
@@ -110,7 +95,6 @@ function toggleTheme() {
   localStorage.setItem("theme", isLight ? "light" : "dark");
 }
 
-// Load saved theme
 const savedTheme = localStorage.getItem("theme");
 if (savedTheme) {
   document.body.classList.remove("dark", "light");
@@ -120,7 +104,3 @@ if (savedTheme) {
 
 </body>
 </html>
-
-
-
-
