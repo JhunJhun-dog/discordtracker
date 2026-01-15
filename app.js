@@ -105,6 +105,56 @@ function exportCSV() {
     return;
   }
 
+  function importCSV(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (!confirm("Importing will replace existing data. Continue?")) {
+    event.target.value = "";
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = function (e) {
+    const lines = e.target.result.trim().split("\n");
+    const headers = lines.shift(); // remove header row
+
+    const importedData = lines.map(line => {
+      const [
+        date,
+        wist,
+        rate,
+        usd,
+        inr,
+        paypal,
+        fee,
+        profit,
+        status
+      ] = line.split(",");
+
+      return {
+        date: new Date(date).toISOString().slice(0, 10),
+        wist: Number(wist),
+        rate: Number(rate),
+        paypal: Number(paypal),
+        status: status || "Paid",
+        notes: ""
+      };
+    });
+
+    data = importedData;
+    localStorage.setItem("wistData", JSON.stringify(data));
+    render();
+
+    alert("CSV imported successfully ✅");
+  };
+
+  reader.readAsText(file);
+  event.target.value = "";
+}
+
+  
   const headers = [
     "Date",
     "Wist",
@@ -152,4 +202,5 @@ function exportCSV() {
 
 // ===== INIT =====
 render();
+
 
