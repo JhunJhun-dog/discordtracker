@@ -1,54 +1,30 @@
-// ===== CONFIG =====
-const USD_TO_INR = 86; // 1 USD = 86 INR
-
-// ===== DATA STORAGE =====
+const USD_TO_INR = 86;
 let data = JSON.parse(localStorage.getItem("wistData")) || [];
 
-// ===== ELEMENTS =====
 const tableBody = document.getElementById("tableBody");
 const form = document.getElementById("entryForm");
-
-// Set default date
 document.getElementById("date").valueAsDate = new Date();
 
-// ===== HELPERS =====
-function formatDate(dateStr) {
-  const d = new Date(dateStr);
-  return d.toLocaleDateString("en-GB", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric"
-  });
+function formatDate(d) {
+  return new Date(d).toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"});
 }
 
-// PayPal fee: 4.99% + $0.49
-function paypalFee(amount) {
-  return +(amount * 0.0499 + 0.49).toFixed(2);
+function paypalFee(v) {
+  return +(v * 0.0499 + 0.49).toFixed(2);
 }
 
-// ===== RENDER UI =====
 function render() {
   tableBody.innerHTML = "";
 
-  let totalWist = 0;
-  let totalUsd = 0;
-  let totalInr = 0;
-  let totalPaypal = 0;
-  let totalProfit = 0;
+  let tw=0, tu=0, ti=0, tp=0, tpr=0;
 
-  data.forEach((e, i) => {
-    if (!e.status) e.status = "Paid";
-
+  data.forEach((e,i)=>{
     const usd = +(e.wist / e.rate).toFixed(2);
     const inr = +(usd * USD_TO_INR).toFixed(2);
     const fee = paypalFee(e.paypal);
     const profit = +(e.paypal - fee).toFixed(2);
 
-    totalWist += e.wist;
-    totalUsd += usd;
-    totalInr += inr;
-    totalPaypal += e.paypal;
-    totalProfit += profit;
+    tw+=e.wist; tu+=usd; ti+=inr; tp+=e.paypal; tpr+=profit;
 
     tableBody.innerHTML += `
       <tr>
@@ -60,147 +36,74 @@ function render() {
         <td>$${fee}</td>
         <td>$${profit}</td>
         <td>${e.status}</td>
-        <td><button onclick="del(${i})">✅</button></td>
-      </tr>
-    `;
+        <td><button onclick="del(${i})">❌</button></td>
+      </tr>`;
   });
 
-  document.getElementById("totalWist").innerText = totalWist;
-  document.getElementById("totalUsd").innerText = totalUsd.toFixed(2);
-  document.getElementById("totalInr").innerText = totalInr.toFixed(2);
-  document.getElementById("totalPaypal").innerText = totalPaypal.toFixed(2);
-  document.getElementById("totalProfit").innerText = totalProfit.toFixed(2);
+  totalWist.innerText = tw;
+  totalUsd.innerText = tu.toFixed(2);
+  totalInr.innerText = ti.toFixed(2);
+  totalPaypal.innerText = tp.toFixed(2);
+  totalProfit.innerText = tpr.toFixed(2);
 
   localStorage.setItem("wistData", JSON.stringify(data));
 }
 
-// ===== DELETE ENTRY =====
-function del(index) {
-  data.splice(index, 1);
+function del(i){
+  data.splice(i,1);
   render();
 }
 
-// ===== ADD ENTRY =====
-form.addEventListener("submit", function (e) {
+form.addEventListener("submit",e=>{
   e.preventDefault();
-
   data.push({
-    date: date.value,
-    wist: Number(wist.value),
-    rate: Number(rate.value), // Wist per $1
-    paypal: Number(paypal.value),
-    status: status.value,
-    notes: notes.value
+    date:date.value,
+    wist:+wist.value,
+    rate:+rate.value,
+    paypal:+paypal.value,
+    status:status.value,
+    notes:notes.value
   });
-
   form.reset();
-  date.valueAsDate = new Date();
+  date.valueAsDate=new Date();
   render();
 });
 
-// ===== CSV EXPORT =====
-function exportCSV() {
-  if (!data.length) {
-    alert("No data to export");
-    return;
-  }
+function exportCSV(){
+  if(!data.length) return alert("No data");
 
-  function importCSV(event) {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  if (!confirm("Importing will replace existing data. Continue?")) {
-    event.target.value = "";
-    return;
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = function (e) {
-    const lines = e.target.result.trim().split("\n");
-    const headers = lines.shift(); // remove header row
-
-    const importedData = lines.map(line => {
-      const [
-        date,
-        wist,
-        rate,
-        usd,
-        inr,
-        paypal,
-        fee,
-        profit,
-        status
-      ] = line.split(",");
-
-      return {
-        date: new Date(date).toISOString().slice(0, 10),
-        wist: Number(wist),
-        rate: Number(rate),
-        paypal: Number(paypal),
-        status: status || "Paid",
-        notes: ""
-      };
-    });
-
-    data = importedData;
-    localStorage.setItem("wistData", JSON.stringify(data));
-    render();
-
-    alert("CSV imported successfully ✅");
-  };
-
-  reader.readAsText(file);
-  event.target.value = "";
-}
-
-  
-  const headers = [
-    "Date",
-    "Wist",
-    "Rate (Wist per $)",
-    "USD",
-    "INR",
-    "PayPal",
-    "Fee",
-    "Profit",
-    "Status"
-  ];
-
-  const rows = data.map(e => {
-    const usd = (e.wist / e.rate).toFixed(2);
-    const inr = (usd * USD_TO_INR).toFixed(2);
-    const fee = paypalFee(e.paypal).toFixed(2);
-    const profit = (e.paypal - fee).toFixed(2);
-
-    return [
-      formatDate(e.date),
-      e.wist,
-      e.rate,
-      usd,
-      inr,
-      e.paypal,
-      fee,
-      profit,
-      e.status
-    ];
+  let csv="Date,Wist,Rate,USD,INR,PayPal,Fee,Profit,Status\n";
+  data.forEach(e=>{
+    const usd=(e.wist/e.rate).toFixed(2);
+    const inr=(usd*USD_TO_INR).toFixed(2);
+    const fee=paypalFee(e.paypal).toFixed(2);
+    const profit=(e.paypal-fee).toFixed(2);
+    csv+=`${e.date},${e.wist},${e.rate},${usd},${inr},${e.paypal},${fee},${profit},${e.status}\n`;
   });
 
-  let csv = headers.join(",") + "\n";
-  rows.forEach(r => (csv += r.join(",") + "\n"));
-
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "discord-earnings.csv";
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+  a.download="discord-earnings.csv";
   a.click();
-
-  URL.revokeObjectURL(url);
 }
 
-// ===== INIT =====
+function importCSV(ev){
+  const f=ev.target.files[0];
+  if(!f||!confirm("Replace existing data?")) return;
+
+  const r=new FileReader();
+  r.onload=e=>{
+    const lines=e.target.result.trim().split("\n");
+    lines.shift();
+    data=lines.map(l=>{
+      const [date,wist,rate,, ,paypal,, ,status]=l.split(",");
+      return {date,wist:+wist,rate:+rate,paypal:+paypal,status:status||"Paid",notes:""};
+    });
+    render();
+    alert("Import successful");
+  };
+  r.readAsText(f);
+  ev.target.value="";
+}
+
 render();
-
-
