@@ -16,9 +16,13 @@
     <h2>💜 Tracker</h2>
 
     <nav>
-      <a class="active">Dashboard</a>
-      <a onclick="exportCSV()">Export CSV</a>
-    </nav>
+  <a class="active">Dashboard</a>
+  <a onclick="exportCSV()">Export CSV</a>
+  <label class="import-btn">
+    Import CSV
+    <input type="file" accept=".csv" onchange="importCSV(event)" hidden />
+  </label>
+</nav>
 
     <button class="theme-toggle" onclick="toggleTheme()">🌙 / ☀️</button>
   </aside>
@@ -116,6 +120,7 @@ if (savedTheme) {
 
 </body>
 </html>
+
 
 
 
