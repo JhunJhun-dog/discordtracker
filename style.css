@@ -167,3 +167,17 @@ th, td {
     padding: 15px;
   }
 }
+
+.import-btn {
+  display: block;
+  padding: 10px;
+  color: var(--muted);
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.import-btn:hover {
+  background: var(--card);
+  color: var(--text);
+}
+
