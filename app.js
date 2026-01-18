@@ -35,7 +35,7 @@ function render() {
         <td>$${e.paypal}</td>
         <td>$${fee}</td>
         <td>$${profit}</td>
-        <td>${e.status}</td>
+        <td>${e.status || "Paid"}</td>
         <td><button onclick="del(${i})">✅</button></td>
       </tr>`;
   });
@@ -107,4 +107,5 @@ function importCSV(ev){
 }
 
 render();
+
 
